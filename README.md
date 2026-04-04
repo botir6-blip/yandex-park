@@ -195,34 +195,3 @@ Schema ва settings'да стандарт:
 ## 9. Эслатма
 Бу архив — **пухта ўйланган MVP старт-проект**.  
 Яъни каркас ва асосий логика тайёр. Реал ишлаб чиқишда дизайн, интеграция ва production ҳимоялари яна кучайтирилади.
-
-
-## Railway'ga joylash
-
-Bu loyiha **bitta repo, ikkita service** ko'rinishida deploy qilinadi:
-- `admin` service -> `SERVICE_TYPE=admin`
-- `bot` service -> `SERVICE_TYPE=bot`
-
-Arxiv ichida `railway.toml` va `start.sh` bor. Railway build paytida start command avtomatik olinadi.
-
-### Railway variables
-Kamida quyidagilarni qo'ying:
-
-```env
-DATABASE_URL=...
-SECRET_KEY=uzun-maxfiy-qiymat
-CARD_ENCRYPTION_KEY=...
-BOT_TOKEN=...
-SERVICE_TYPE=admin
-```
-
-Bot service uchun faqat:
-
-```env
-SERVICE_TYPE=bot
-```
-
-### Muhim
-- `admin` service uchun domen ochiladi
-- `bot` service uchun domen shart emas
-- ikkala service ham **bir xil Postgres** ga ulangan bo'lishi kerak
