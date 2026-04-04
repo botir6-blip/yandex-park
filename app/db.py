@@ -14,7 +14,7 @@ elif db_url.startswith("postgresql://"):
 
 engine = create_engine(db_url, future=True, pool_pre_ping=True)
 SessionLocal = scoped_session(
-    sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
+    sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True, expire_on_commit=False)
 )
 db_session = SessionLocal
 Base = declarative_base()
