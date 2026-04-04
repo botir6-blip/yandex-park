@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Yandex Park Admin{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div>
+        <div class="brand">Yandex Park Admin</div>
+        <div class="subtitle">Панель управления автопарком</div>
+      </div>
+      {% if current_admin %}
+      <nav class="nav">
+        <a href="{{ url_for('dashboard') }}">Главная</a>
+        <a href="{{ url_for('drivers_page') }}">Водители</a>
+        <a href="{{ url_for('withdrawals_page') }}">Выводы</a>
+        <a href="{{ url_for('settings_page') }}">Настройки</a>
+        <a href="{{ url_for('logout') }}">Выход</a>
+      </nav>
+      {% endif %}
+    </div>
+  </header>
+
+  <main class="container main">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-wrap">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

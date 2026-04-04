@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Настройки{% endblock %}
+{% block content %}
+<div class="card narrow-wide">
+  <h1>Настройки</h1>
+  <form method="post" class="form-grid">
+    <label><span>Комиссия пополнения, %</span><input type="text" name="deposit_commission_percent" value="{{ values.deposit_commission_percent }}"></label>
+    <label><span>Глобальный резерв</span><input type="text" name="global_min_reserve_balance" value="{{ values.global_min_reserve_balance }}"></label>
+    <label><span>Минимальная сумма вывода</span><input type="text" name="min_withdraw_amount" value="{{ values.min_withdraw_amount }}"></label>
+    <label><span>Максимальная сумма вывода</span><input type="text" name="max_withdraw_amount" value="{{ values.max_withdraw_amount }}"></label>
+    <label><span>Контакт оператора</span><input type="text" name="support_contact" value="{{ values.support_contact }}"></label>
+    <label><span>Язык по умолчанию</span><input type="text" name="default_language" value="{{ values.default_language }}"></label>
+    <button class="btn" type="submit">Сохранить</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Главная{% endblock %}
+{% block content %}
+<h1>Сводка</h1>
+<div class="stats-grid">
+  <div class="stat card"><div class="label">Всего водителей</div><div class="value">{{ stats.drivers_total }}</div></div>
+  <div class="stat card"><div class="label">Открытые выводы</div><div class="value">{{ stats.pending_withdrawals }}</div></div>
+  <div class="stat card"><div class="label">Всего заявок на вывод</div><div class="value">{{ stats.withdrawals_total }}</div></div>
+  <div class="stat card"><div class="label">Контакт оператора</div><div class="value">{{ stats.support_contact }}</div></div>
+</div>
+
+<div class="card">
+  <div class="section-head">
+    <h2>Последние открытые заявки</h2>
+    <a class="btn btn-light" href="{{ url_for('withdrawals_page') }}">Все заявки</a>
+  </div>
+  {% if withdrawals %}
+  <table>
+    <thead><tr><th>ID</th><th>Водитель</th><th>Сумма</th><th>Статус</th><th>Дата</th></tr></thead>
+    <tbody>
+      {% for item in withdrawals %}
+      <tr>
+        <td>{{ item.id }}</td>
+        <td>{{ item.driver.full_name }}</td>
+        <td>{{ item.requested_amount }}</td>
+        <td><span class="badge">{{ item.status }}</span></td>
+        <td>{{ item.created_at.strftime('%Y-%m-%d %H:%M') if item.created_at else '' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">Открытых заявок нет.</p>
+  {% endif %}
+</div>
+{% endblock %}

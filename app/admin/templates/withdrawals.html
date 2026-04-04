@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Выводы{% endblock %}
+{% block content %}
+<div class="section-head">
+  <h1>Заявки на вывод</h1>
+  <form method="get" class="search-form narrow-inline">
+    <select name="status">
+      <option value="" {% if not status %}selected{% endif %}>Все статусы</option>
+      {% for option in ['new','accepted','paid','rejected','cancelled'] %}
+      <option value="{{ option }}" {% if status == option %}selected{% endif %}>{{ option }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn" type="submit">Фильтр</button>
+  </form>
+</div>
+<div class="card">
+  {% if withdrawals %}
+  <table>
+    <thead><tr><th>ID</th><th>Водитель</th><th>Карта</th><th>Сумма</th><th>Статус</th><th>Дата</th><th>Действия</th></tr></thead>
+    <tbody>
+      {% for item in withdrawals %}
+      <tr>
+        <td>{{ item.id }}</td>
+        <td>{{ item.driver.full_name }}</td>
+        <td>{{ item.card.card_mask }}</td>
+        <td>{{ item.requested_amount }}</td>
+        <td>{{ item.status }}</td>
+        <td>{{ item.created_at.strftime('%Y-%m-%d %H:%M') if item.created_at else '' }}</td>
+        <td>
+          {% if item.status in ['new', 'accepted'] %}
+          <div class="actions-col">
+            <form method="post" action="{{ url_for('withdrawals_action', withdrawal_id=item.id, action='accepted') }}"><button class="btn btn-light" type="submit">Принять</button></form>
+            <form method="post" action="{{ url_for('withdrawals_action', withdrawal_id=item.id, action='paid') }}"><button class="btn" type="submit">Оплачено</button></form>
+            <form method="post" action="{{ url_for('withdrawals_action', withdrawal_id=item.id, action='rejected') }}"><button class="btn btn-danger" type="submit">Отклонить</button></form>
+          </div>
+          {% else %}
+            <span class="muted">—</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">Заявок нет.</p>
+  {% endif %}
+</div>
+{% endblock %}

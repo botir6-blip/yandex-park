@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Водители{% endblock %}
+{% block content %}
+<div class="section-head">
+  <h1>Водители</h1>
+  <form method="get" class="search-form">
+    <input type="text" name="q" value="{{ query }}" placeholder="ФИО, телефон, Telegram, Park ID">
+    <button class="btn" type="submit">Найти</button>
+  </form>
+</div>
+<div class="card">
+  <table>
+    <thead>
+      <tr><th>ID</th><th>ФИО</th><th>Телефон</th><th>Telegram</th><th>Баланс</th><th>Резерв</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for d in drivers %}
+      <tr>
+        <td>{{ d.id }}</td>
+        <td>{{ d.full_name }}</td>
+        <td>{{ d.phone }}</td>
+        <td>{% if d.telegram_username %}@{{ d.telegram_username }}{% elif d.telegram_id %}{{ d.telegram_id }}{% else %}<span class="muted">не привязан</span>{% endif %}</td>
+        <td>{{ d.wallet.main_balance if d.wallet else 0 }}</td>
+        <td>{{ d.wallet.min_reserve_balance if d.wallet else 0 }}</td>
+        <td><a class="btn btn-light" href="{{ url_for('driver_detail', driver_id=d.id) }}">Открыть</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if not drivers %}<p class="muted">Водители не найдены.</p>{% endif %}
+</div>
+{% endblock %}
