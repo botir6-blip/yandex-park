@@ -17,18 +17,17 @@ async def show_balance(message: Message):
         if not driver:
             await message.answer('Используйте /start для привязки аккаунта.')
             return
+
         touch_driver(db, driver)
         wallet = ensure_wallet(db, driver)
         lang = driver.language or 'ru'
+
         text = (
-            f"<b>{t(lang, 'balance_title')}</b>
-"
-            f"Основной баланс: <b>{wallet.main_balance}</b>
-"
-            f"Бонусный баланс: <b>{wallet.bonus_balance}</b>
-"
-            f"Резерв: <b>{wallet.min_reserve_balance}</b>
-"
+            f"<b>{t(lang, 'balance_title')}</b>\n"
+            f"Основной баланс: <b>{wallet.main_balance}</b>\n"
+            f"Бонусный баланс: <b>{wallet.bonus_balance}</b>\n"
+            f"Резерв: <b>{wallet.min_reserve_balance}</b>\n"
             f"Доступно к выводу: <b>{available_to_withdraw(wallet)}</b>"
         )
+
         await message.answer(text, reply_markup=main_menu_keyboard(lang))
