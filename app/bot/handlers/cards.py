@@ -82,14 +82,24 @@ async def card_view(callback: CallbackQuery):
         if not driver:
             await callback.answer('Нет доступа', show_alert=True)
             return
+
         card = get_card(db, card_id, driver.id)
         if not card:
             await callback.answer('Карта не найдена', show_alert=True)
             return
-        text = f"<b>{card.card_mask}</b>
-Тип: {card.card_type or 'Card'}
-Владелец: {card.holder_name or '-'}"
-        await callback.message.answer(text, reply_markup=single_card_actions(card.id, card.is_primary))
+
+        text = (
+            f"<b>{card.card_mask}</b>\n"
+            f"Тип: {card.card_type or 'Card'}\n"
+            f"Владелец: {card.holder_name or '-'}"
+        )
+
+        await callback.message.answer(
+            text,
+            reply_markup=single_card_actions(card.id, card.is_primary),
+            parse_mode="HTML"
+        )
+
     await callback.answer()
 
 
