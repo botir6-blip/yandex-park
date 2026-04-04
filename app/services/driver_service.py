@@ -1,24 +1,53 @@
 from __future__ import annotations
 
 from datetime import datetime
+
 from sqlalchemy import or_, select
+from sqlalchemy.orm import selectinload
 
 from app.models import Driver, DriverWallet
-from app.utils import normalize_phone
 from app.services.settings_service import get_setting
+from app.utils import normalize_phone
 
 
 def get_driver_by_phone(session, phone: str) -> Driver | None:
     normalized = normalize_phone(phone)
-    return session.execute(select(Driver).where(Driver.phone == normalized)).scalar_one_or_none()
+    stmt = (
+        select(Driver)
+        .options(
+            selectinload(Driver.wallet),
+            selectinload(Driver.cards),
+            selectinload(Driver.withdrawals),
+        )
+        .where(Driver.phone == normalized)
+    )
+    return session.execute(stmt).scalar_one_or_none()
 
 
 def get_driver_by_telegram_id(session, telegram_id: int) -> Driver | None:
-    return session.execute(select(Driver).where(Driver.telegram_id == telegram_id)).scalar_one_or_none()
+    stmt = (
+        select(Driver)
+        .options(
+            selectinload(Driver.wallet),
+            selectinload(Driver.cards),
+            selectinload(Driver.withdrawals),
+        )
+        .where(Driver.telegram_id == telegram_id)
+    )
+    return session.execute(stmt).scalar_one_or_none()
 
 
 def get_driver(session, driver_id: int) -> Driver | None:
-    return session.execute(select(Driver).where(Driver.id == driver_id)).scalar_one_or_none()
+    stmt = (
+        select(Driver)
+        .options(
+            selectinload(Driver.wallet),
+            selectinload(Driver.cards),
+            selectinload(Driver.withdrawals),
+        )
+        .where(Driver.id == driver_id)
+    )
+    return session.execute(stmt).scalar_one_or_none()
 
 
 def bind_driver_to_telegram(session, driver: Driver, telegram_id: int, username: str | None) -> Driver:
@@ -39,7 +68,11 @@ def touch_driver(session, driver: Driver) -> None:
 
 
 def search_drivers(session, query: str | None = None):
-    stmt = select(Driver).order_by(Driver.id.desc())
+    stmt = (
+        select(Driver)
+        .options(selectinload(Driver.wallet))
+        .order_by(Driver.id.desc())
+    )
     if query:
         pattern = f"%{query.strip()}%"
         stmt = stmt.where(
