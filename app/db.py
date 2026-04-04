@@ -13,19 +13,8 @@ elif db_url.startswith("postgresql://"):
     db_url = db_url.replace("postgresql://", "postgresql+psycopg://", 1)
 
 engine = create_engine(db_url, future=True, pool_pre_ping=True)
-SessionLocal = scoped_session(sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True))
+SessionLocal = scoped_session(
+    sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
+)
 db_session = SessionLocal
 Base = declarative_base()
-
-
-@contextmanager
-def db_session():
-    session = SessionLocal()
-    try:
-        yield session
-        session.commit()
-    except Exception:
-        session.rollback()
-        raise
-    finally:
-        session.close()
