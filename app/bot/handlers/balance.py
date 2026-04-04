@@ -10,17 +10,17 @@ from app.services.wallet_service import available_to_withdraw
 router = Router()
 
 
-@router.message(F.text == '💰 Баланс')
+@router.message(F.text == "💰 Баланс")
 async def show_balance(message: Message):
     with db_session() as db:
         driver = get_driver_by_telegram_id(db, message.from_user.id)
         if not driver:
-            await message.answer('Используйте /start для привязки аккаунта.')
+            await message.answer("Используйте /start для привязки аккаунта.")
             return
 
         touch_driver(db, driver)
         wallet = ensure_wallet(db, driver)
-        lang = driver.language or 'ru'
+        lang = driver.language or "ru"
 
         text = (
             f"<b>{t(lang, 'balance_title')}</b>\n"
@@ -30,4 +30,4 @@ async def show_balance(message: Message):
             f"Доступно к выводу: <b>{available_to_withdraw(wallet)}</b>"
         )
 
-        await message.answer(text, reply_markup=main_menu_keyboard(lang))
+        await message.answer(text, reply_markup=main_menu_keyboard(lang), parse_mode="HTML")
