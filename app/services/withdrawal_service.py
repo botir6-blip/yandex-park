@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from datetime import datetime
 from decimal import Decimal
+
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
+
 from app.models import Driver, DriverCard, Transaction, WithdrawalRequest
 from app.services.card_service import get_card
 from app.services.driver_service import ensure_wallet
@@ -11,27 +14,53 @@ from app.services.wallet_service import available_to_withdraw
 
 
 def get_open_withdrawal(session, driver_id: int) -> WithdrawalRequest | None:
-    stmt = select(WithdrawalRequest).where(
-        WithdrawalRequest.driver_id == driver_id,
-        WithdrawalRequest.status.in_(["new", "accepted"]),
+    stmt = (
+        select(WithdrawalRequest)
+        .options(
+            selectinload(WithdrawalRequest.driver),
+            selectinload(WithdrawalRequest.card),
+        )
+        .where(
+            WithdrawalRequest.driver_id == driver_id,
+            WithdrawalRequest.status.in_(["new", "accepted"]),
+        )
     )
     return session.execute(stmt).scalar_one_or_none()
 
 
 def get_withdrawal(session, withdrawal_id: int) -> WithdrawalRequest | None:
-    return session.execute(
-        select(WithdrawalRequest).where(WithdrawalRequest.id == withdrawal_id)
-    ).scalar_one_or_none()
+    stmt = (
+        select(WithdrawalRequest)
+        .options(
+            selectinload(WithdrawalRequest.driver),
+            selectinload(WithdrawalRequest.card),
+        )
+        .where(WithdrawalRequest.id == withdrawal_id)
+    )
+    return session.execute(stmt).scalar_one_or_none()
 
 
 def list_withdrawals(session, status: str | None = None):
-    stmt = select(WithdrawalRequest).order_by(WithdrawalRequest.created_at.desc(), WithdrawalRequest.id.desc())
+    stmt = (
+        select(WithdrawalRequest)
+        .options(
+            selectinload(WithdrawalRequest.driver),
+            selectinload(WithdrawalRequest.card),
+        )
+        .order_by(WithdrawalRequest.created_at.desc(), WithdrawalRequest.id.desc())
+    )
     if status:
         stmt = stmt.where(WithdrawalRequest.status == status)
     return list(session.execute(stmt).scalars())
 
 
-def create_withdrawal_request(session, driver: Driver, card_id: int, amount: Decimal, comment: str | None = None) -> WithdrawalRequest:
+def create_withdrawal_request(
+    session,
+    driver: Driver,
+    card_id: int,
+    amount: Decimal,
+    comment: str | None = None,
+) -> WithdrawalRequest:
     wallet = ensure_wallet(session, driver)
     open_req = get_open_withdrawal(session, driver.id)
     if open_req:
@@ -68,7 +97,13 @@ def create_withdrawal_request(session, driver: Driver, card_id: int, amount: Dec
     return withdrawal
 
 
-def update_withdrawal_status(session, withdrawal: WithdrawalRequest, new_status: str, admin_id: int | None = None, note: str | None = None) -> WithdrawalRequest:
+def update_withdrawal_status(
+    session,
+    withdrawal: WithdrawalRequest,
+    new_status: str,
+    admin_id: int | None = None,
+    note: str | None = None,
+) -> WithdrawalRequest:
     if new_status not in {"accepted", "paid", "rejected", "cancelled"}:
         raise ValueError("Нотўғри статус.")
 
