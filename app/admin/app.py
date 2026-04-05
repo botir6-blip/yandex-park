@@ -4,7 +4,7 @@ from flask import Flask, flash, redirect, render_template, request, session, url
 
 from app.config import settings
 from app.db import db_session
-from app.services.admin_service import authenticate_admin, get_admin
+from app.services.admin_service import authenticate_admin, get_admin, update_admin_password
 from app.services.audit_service import log_action
 from app.services.driver_service import ensure_wallet, get_driver, search_drivers
 from app.services.settings_service import get_setting, set_setting
@@ -188,11 +188,44 @@ def create_app():
         ]
         with db_session() as db:
             if request.method == "POST":
-                for key in keys:
-                    value = request.form.get(key, "").strip()
-                    if value:
-                        set_setting(db, key, value)
-                flash("Созламалар сақланди.", "success")
+                form_action = request.form.get("form_action", "settings").strip()
+
+                if form_action == "password":
+                    admin = get_admin(db, session["admin_id"])
+                    current_password = request.form.get("current_password", "")
+                    new_password = request.form.get("new_password", "")
+                    confirm_password = request.form.get("confirm_password", "")
+
+                    if not admin:
+                        flash("Админ топилмади.", "error")
+                    elif not authenticate_admin(db, admin.login, current_password):
+                        flash("Жорий пароль нотўғри.", "error")
+                    elif len(new_password) < 6:
+                        flash("Янги пароль камида 6 та белгидан иборат бўлиши керак.", "error")
+                    elif new_password != confirm_password:
+                        flash("Янги пароль ва тасдиқлаш бир хил эмас.", "error")
+                    elif current_password == new_password:
+                        flash("Янги пароль жорий парольдан фарқ қилиши керак.", "error")
+                    else:
+                        update_admin_password(db, admin, new_password)
+                        log_action(
+                            db,
+                            action="admin_password_changed",
+                            entity_type="admin",
+                            entity_id=admin.id,
+                            admin_id=admin.id,
+                            details={"login": admin.login},
+                            ip_address=request.remote_addr,
+                        )
+                        db.commit()
+                        flash("Пароль муваффақиятли алмаштирилди.", "success")
+                else:
+                    for key in keys:
+                        value = request.form.get(key, "").strip()
+                        if value:
+                            set_setting(db, key, value)
+                    db.commit()
+                    flash("Созламалар сақланди.", "success")
 
             values = {key: get_setting(db, key, "") for key in keys}
             return render_template("settings.html", values=values)
