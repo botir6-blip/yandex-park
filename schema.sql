@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS drivers (
     telegram_id         BIGINT UNIQUE,
     telegram_username   VARCHAR(100),
     park_driver_id      VARCHAR(100),
+    yandex_contractor_profile_id VARCHAR(100),
     language            language_code NOT NULL DEFAULT 'ru',
     status              driver_status NOT NULL DEFAULT 'active',
     is_verified         BOOLEAN NOT NULL DEFAULT FALSE,
@@ -76,7 +77,8 @@ CREATE TABLE IF NOT EXISTS drivers (
     created_at          TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at          TIMESTAMP NOT NULL DEFAULT NOW(),
     CONSTRAINT uq_drivers_phone UNIQUE (phone),
-    CONSTRAINT uq_drivers_park_driver_id UNIQUE (park_driver_id)
+    CONSTRAINT uq_drivers_park_driver_id UNIQUE (park_driver_id),
+    CONSTRAINT uq_drivers_yandex_contractor_profile_id UNIQUE (yandex_contractor_profile_id)
 );
 
 DROP TRIGGER IF EXISTS trg_drivers_updated_at ON drivers;
@@ -88,6 +90,7 @@ EXECUTE FUNCTION set_updated_at();
 CREATE INDEX IF NOT EXISTS idx_drivers_status ON drivers(status);
 CREATE INDEX IF NOT EXISTS idx_drivers_full_name ON drivers(full_name);
 CREATE INDEX IF NOT EXISTS idx_drivers_telegram_id ON drivers(telegram_id);
+CREATE INDEX IF NOT EXISTS idx_drivers_yandex_contractor_profile_id ON drivers(yandex_contractor_profile_id);
 
 CREATE TABLE IF NOT EXISTS driver_wallets (
     id                      BIGSERIAL PRIMARY KEY,
