@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import scoped_session, sessionmaker, declarative_base
 from app.config import settings
 
@@ -18,3 +18,16 @@ SessionLocal = scoped_session(
 )
 db_session = SessionLocal
 Base = declarative_base()
+
+
+def ensure_runtime_schema() -> None:
+    try:
+        with engine.begin() as conn:
+            conn.execute(text("ALTER TABLE IF EXISTS drivers ADD COLUMN IF NOT EXISTS yandex_contractor_profile_id VARCHAR(100)"))
+            conn.execute(text("CREATE UNIQUE INDEX IF NOT EXISTS uq_drivers_yandex_contractor_profile_id ON drivers(yandex_contractor_profile_id) WHERE yandex_contractor_profile_id IS NOT NULL"))
+    except Exception:
+        # Жонли муҳитда база ҳали яратилмаган бўлиши мумкин; schema.sql кейин қўйилади.
+        pass
+
+
+ensure_runtime_schema()

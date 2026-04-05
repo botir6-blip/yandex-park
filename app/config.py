@@ -16,6 +16,9 @@ class Settings:
     bot_support_contact: str = os.getenv("BOT_SUPPORT_CONTACT", "@support")
     bot_name: str = os.getenv("BOT_NAME", "Prime taxi")
     default_language: str = os.getenv("DEFAULT_LANGUAGE", "ru")
+    yandex_park_id: str = os.getenv("YANDEX_PARK_ID", "")
+    yandex_client_id: str = os.getenv("YANDEX_CLIENT_ID", "")
+    yandex_api_key: str = os.getenv("YANDEX_API_KEY", "")
 
 
 settings = Settings()

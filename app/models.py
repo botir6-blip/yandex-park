@@ -30,6 +30,7 @@ class Driver(Base):
     telegram_id: Mapped[int | None] = mapped_column(BigInteger, unique=True)
     telegram_username: Mapped[str | None] = mapped_column(String(100))
     park_driver_id: Mapped[str | None] = mapped_column(String(100), unique=True)
+    yandex_contractor_profile_id: Mapped[str | None] = mapped_column(String(100), unique=True)
     language: Mapped[str] = mapped_column(String(20), default="ru", nullable=False)
     status: Mapped[str] = mapped_column(String(20), default="active", nullable=False)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
