@@ -1,7 +1,7 @@
 from sqlalchemy import select
 
 from app.models import Admin
-from app.security import verify_password
+from app.security import hash_password, verify_password
 
 
 def authenticate_admin(session, login: str, password: str) -> Admin | None:
@@ -17,3 +17,10 @@ def authenticate_admin(session, login: str, password: str) -> Admin | None:
 
 def get_admin(session, admin_id: int) -> Admin | None:
     return session.execute(select(Admin).where(Admin.id == admin_id)).scalar_one_or_none()
+
+
+def update_admin_password(session, admin: Admin, new_password: str) -> Admin:
+    admin.password_hash = hash_password(new_password)
+    session.add(admin)
+    session.flush()
+    return admin
