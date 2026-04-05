@@ -14,7 +14,7 @@ class Settings:
     admin_host: str = os.getenv("ADMIN_HOST", "127.0.0.1")
     admin_port: int = int(os.getenv("ADMIN_PORT", "5000"))
     bot_support_contact: str = os.getenv("BOT_SUPPORT_CONTACT", "@support")
-    bot_name: str = os.getenv("BOT_NAME", "Park Bot")
+    bot_name: str = os.getenv("BOT_NAME", "Prime taxi")
     default_language: str = os.getenv("DEFAULT_LANGUAGE", "ru")
 
 
