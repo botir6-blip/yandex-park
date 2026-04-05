@@ -6,11 +6,12 @@ from app.config import settings
 from app.db import db_session
 from app.services.admin_service import authenticate_admin, get_admin, update_admin_password
 from app.services.audit_service import log_action
-from app.services.driver_service import ensure_wallet, get_driver, search_drivers
+from app.services.driver_service import create_driver, ensure_wallet, get_driver, search_drivers
 from app.services.settings_service import get_setting, set_setting
 from app.services.transaction_service import get_driver_transactions
 from app.services.wallet_service import adjust_wallet, available_to_withdraw
 from app.services.withdrawal_service import get_withdrawal, list_withdrawals, update_withdrawal_status
+from app.utils import decimal_or_none
 
 
 def admin_required(view):
@@ -80,6 +81,74 @@ def create_app():
             for d in drivers:
                 ensure_wallet(db, d)
             return render_template("drivers.html", drivers=drivers, query=query)
+
+    @app.route("/drivers/new", methods=["GET", "POST"])
+    @admin_required
+    def driver_create_page():
+        form_data = {
+            "full_name": "",
+            "phone": "",
+            "language": "uz_cyrl",
+            "status": "active",
+            "park_driver_id": "",
+            "yandex_contractor_profile_id": "",
+            "note": "",
+            "main_balance": "0",
+            "bonus_balance": "0",
+            "min_reserve_balance": "0",
+        }
+        with db_session() as db:
+            if request.method == "POST":
+                for key in form_data:
+                    form_data[key] = request.form.get(key, "").strip() or form_data[key]
+
+                main_balance = decimal_or_none(request.form.get("main_balance"))
+                bonus_balance = decimal_or_none(request.form.get("bonus_balance"))
+                min_reserve_balance = decimal_or_none(request.form.get("min_reserve_balance"))
+
+                if main_balance is None or bonus_balance is None or min_reserve_balance is None:
+                    flash("Баланс майдонларига фақат рақам киритинг.", "error")
+                elif main_balance < 0 or bonus_balance < 0 or min_reserve_balance < 0:
+                    flash("Баланс ва резерв манфий бўлиши мумкин эмас.", "error")
+                else:
+                    try:
+                        driver = create_driver(
+                            db,
+                            full_name=request.form.get("full_name", ""),
+                            phone=request.form.get("phone", ""),
+                            language=request.form.get("language", "ru"),
+                            status=request.form.get("status", "active"),
+                            park_driver_id=request.form.get("park_driver_id", ""),
+                            yandex_contractor_profile_id=request.form.get("yandex_contractor_profile_id", ""),
+                            note=request.form.get("note", ""),
+                        )
+                        wallet = ensure_wallet(db, driver)
+                        wallet.main_balance = main_balance
+                        wallet.bonus_balance = bonus_balance
+                        wallet.min_reserve_balance = min_reserve_balance
+                        db.flush()
+                        log_action(
+                            db,
+                            action="driver_created",
+                            entity_type="driver",
+                            entity_id=driver.id,
+                            admin_id=session["admin_id"],
+                            details={
+                                "full_name": driver.full_name,
+                                "phone": driver.phone,
+                                "park_driver_id": driver.park_driver_id,
+                                "yandex_contractor_profile_id": driver.yandex_contractor_profile_id,
+                            },
+                            ip_address=request.remote_addr,
+                        )
+                        db.commit()
+                        flash("Ҳайдовчи муваффақиятли қўшилди.", "success")
+                        return redirect(url_for("driver_detail", driver_id=driver.id))
+                    except Exception as exc:
+                        db.rollback()
+                        flash(str(exc), "error")
+
+            return render_template("driver_create.html", form_data=form_data)
 
     @app.route("/drivers/<int:driver_id>", methods=["GET", "POST"])
     @admin_required
