@@ -20,6 +20,7 @@ async def show_balance(message: Message):
 
         touch_driver(db, driver)
         wallet = ensure_wallet(db, driver)
+        db.commit()
         lang = driver.language or "ru"
 
         text = (

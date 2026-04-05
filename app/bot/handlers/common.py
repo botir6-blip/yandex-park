@@ -17,6 +17,7 @@ def _driver_context(telegram_user):
         driver = get_driver_by_telegram_id(db, telegram_user.id)
         if driver:
             touch_driver(db, driver)
+            db.commit()
             lang = driver.language or 'ru'
             return driver, lang
     return None, 'ru'

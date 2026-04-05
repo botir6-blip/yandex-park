@@ -20,6 +20,7 @@ async def cmd_start(message: Message, state: FSMContext):
         driver = get_driver_by_telegram_id(db, message.from_user.id)
         if driver:
             touch_driver(db, driver)
+            db.commit()
             lang = driver.language or 'ru'
             await state.clear()
             await message.answer(t(lang, 'main_menu'), reply_markup=main_menu_keyboard(lang))
@@ -36,6 +37,7 @@ async def choose_language(callback: CallbackQuery, state: FSMContext):
         if driver:
             driver.language = lang
             touch_driver(db, driver)
+            db.commit()
             text = 'Язык Prime taxi обновлен.' if lang == 'ru' else 'Prime taxi тили янгиланди.'
             await state.clear()
             await callback.message.answer(text, reply_markup=main_menu_keyboard(lang))
@@ -56,6 +58,7 @@ async def receive_contact(message: Message, state: FSMContext):
         existing = get_driver_by_telegram_id(db, message.from_user.id)
         if existing:
             touch_driver(db, existing)
+            db.commit()
             await state.clear()
             await message.answer(t(existing.language or 'ru', 'main_menu'), reply_markup=main_menu_keyboard(existing.language or 'ru'))
             return
@@ -70,6 +73,7 @@ async def receive_contact(message: Message, state: FSMContext):
 
         bind_driver_to_telegram(db, driver, message.from_user.id, message.from_user.username)
         driver.language = lang
+        db.commit()
         await state.clear()
         await message.answer(t(lang, 'bound_ok'), reply_markup=main_menu_keyboard(lang))
 

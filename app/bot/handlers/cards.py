@@ -22,6 +22,7 @@ async def cards_menu(message: Message):
             await message.answer("Используйте /start для привязки аккаунта Prime taxi.")
             return
         touch_driver(db, driver)
+        db.commit()
         lang = driver.language or "ru"
         cards = get_active_cards(db, driver.id)
         if not cards:
@@ -70,6 +71,7 @@ async def holder_received(message: Message, state: FSMContext):
         lang = driver.language or "ru"
         try:
             add_card(db, driver.id, data["card_number"], holder)
+            db.commit()
             cards = get_active_cards(db, driver.id)
             await message.answer(t(lang, "card_added"), reply_markup=cards_keyboard(cards))
         except Exception as exc:
@@ -120,6 +122,7 @@ async def card_make_primary(callback: CallbackQuery):
 
         try:
             set_primary_card(db, driver.id, card_id)
+            db.commit()
             cards = get_active_cards(db, driver.id)
             await callback.message.answer("Основная карта обновлена.", reply_markup=cards_keyboard(cards))
         except Exception as exc:
@@ -140,6 +143,7 @@ async def card_remove(callback: CallbackQuery):
 
         try:
             delete_card(db, driver.id, card_id)
+            db.commit()
             cards = get_active_cards(db, driver.id)
             await callback.message.answer("Карта удалена.", reply_markup=cards_keyboard(cards))
         except Exception as exc:

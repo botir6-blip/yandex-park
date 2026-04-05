@@ -19,6 +19,7 @@ async def show_history(message: Message):
             return
 
         touch_driver(db, driver)
+        db.commit()
         lang = driver.language or "ru"
         txs = get_driver_transactions(db, driver.id, 10)
 

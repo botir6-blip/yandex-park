@@ -25,6 +25,7 @@ async def withdrawal_start(message: Message, state: FSMContext):
             return
 
         touch_driver(db, driver)
+        db.commit()
         lang = driver.language or "ru"
         cards = get_active_cards(db, driver.id)
 
@@ -67,6 +68,7 @@ async def withdrawal_amount(message: Message, state: FSMContext):
         try:
             amount = Decimal(message.text.replace(",", ".").strip())
             create_withdrawal_request(db, driver, primary.id, amount)
+            db.commit()
             await message.answer(t(lang, "withdraw_created"), reply_markup=main_menu_keyboard(lang))
         except Exception as exc:
             await message.answer(str(exc), reply_markup=main_menu_keyboard(lang))
