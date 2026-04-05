@@ -3,10 +3,13 @@
 {% block content %}
 <div class="section-head">
   <h1>Водители</h1>
-  <form method="get" class="search-form">
+  <div class="actions-row">
+    <a class="btn" href="{{ url_for('driver_create_page') }}">+ Добавить водителя</a>
+    <form method="get" class="search-form">
     <input type="text" name="q" value="{{ query }}" placeholder="ФИО, телефон, Telegram, ID водителя, Yandex profile ID">
-    <button class="btn" type="submit">Найти</button>
-  </form>
+      <button class="btn" type="submit">Найти</button>
+    </form>
+  </div>
 </div>
 <div class="card">
   <table>

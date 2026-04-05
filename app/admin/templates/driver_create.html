@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Добавить водителя{% endblock %}
+{% block content %}
+<div class="section-head">
+  <h1>Добавить водителя</h1>
+  <a class="btn btn-light" href="{{ url_for('drivers_page') }}">Назад</a>
+</div>
+
+<div class="card narrow-wide">
+  <form method="post" class="form-grid two-col">
+    <label>
+      <span>ФИО *</span>
+      <input type="text" name="full_name" value="{{ form_data.full_name }}" required>
+    </label>
+    <label>
+      <span>Телефон *</span>
+      <input type="text" name="phone" value="{{ form_data.phone }}" placeholder="+998901234567" required>
+    </label>
+
+    <label>
+      <span>Язык</span>
+      <select name="language">
+        <option value="uz_cyrl" {% if form_data.language == 'uz_cyrl' %}selected{% endif %}>Узбек (кирилл)</option>
+        <option value="uz_latn" {% if form_data.language == 'uz_latn' %}selected{% endif %}>O'zbek (lotin)</option>
+        <option value="ru" {% if form_data.language == 'ru' %}selected{% endif %}>Русский</option>
+      </select>
+    </label>
+    <label>
+      <span>Статус</span>
+      <select name="status">
+        <option value="active" {% if form_data.status == 'active' %}selected{% endif %}>active</option>
+        <option value="inactive" {% if form_data.status == 'inactive' %}selected{% endif %}>inactive</option>
+        <option value="blocked" {% if form_data.status == 'blocked' %}selected{% endif %}>blocked</option>
+      </select>
+    </label>
+
+    <label>
+      <span>ID водителя в парке</span>
+      <input type="text" name="park_driver_id" value="{{ form_data.park_driver_id }}" placeholder="Например: DRV-1001">
+    </label>
+    <label>
+      <span>Yandex profile ID</span>
+      <input type="text" name="yandex_contractor_profile_id" value="{{ form_data.yandex_contractor_profile_id }}" placeholder="Можно оставить пустым">
+    </label>
+
+    <label>
+      <span>Начальный основной баланс</span>
+      <input type="text" name="main_balance" value="{{ form_data.main_balance }}">
+    </label>
+    <label>
+      <span>Начальный бонусный баланс</span>
+      <input type="text" name="bonus_balance" value="{{ form_data.bonus_balance }}">
+    </label>
+
+    <label>
+      <span>Минимальный резерв</span>
+      <input type="text" name="min_reserve_balance" value="{{ form_data.min_reserve_balance }}">
+    </label>
+    <label class="full-span">
+      <span>Примечание</span>
+      <textarea name="note" rows="4">{{ form_data.note }}</textarea>
+    </label>
+
+    <div class="full-span actions-row">
+      <button class="btn" type="submit">Сохранить</button>
+      <a class="btn btn-light" href="{{ url_for('drivers_page') }}">Отмена</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
