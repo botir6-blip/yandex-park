@@ -19,7 +19,7 @@ async def cards_menu(message: Message):
     with db_session() as db:
         driver = get_driver_by_telegram_id(db, message.from_user.id)
         if not driver:
-            await message.answer("Используйте /start для привязки аккаунта.")
+            await message.answer("Используйте /start для привязки аккаунта Prime taxi.")
             return
         touch_driver(db, driver)
         lang = driver.language or "ru"
@@ -35,7 +35,7 @@ async def card_add_start(callback: CallbackQuery, state: FSMContext):
     with db_session() as db:
         driver = get_driver_by_telegram_id(db, callback.from_user.id)
         if not driver:
-            await callback.message.answer("Используйте /start для привязки аккаунта.")
+            await callback.message.answer("Используйте /start для привязки аккаунта Prime taxi.")
             await callback.answer()
             return
         lang = driver.language or "ru"
@@ -63,7 +63,7 @@ async def holder_received(message: Message, state: FSMContext):
     with db_session() as db:
         driver = get_driver_by_telegram_id(db, message.from_user.id)
         if not driver:
-            await message.answer("Используйте /start для привязки аккаунта.")
+            await message.answer("Используйте /start для привязки аккаунта Prime taxi.")
             await state.clear()
             return
 

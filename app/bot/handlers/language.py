@@ -15,6 +15,6 @@ async def language_menu(message: Message):
     with db_session() as db:
         driver = get_driver_by_telegram_id(db, message.from_user.id)
         if not driver:
-            await message.answer('Используйте /start для привязки аккаунта.')
+            await message.answer('Используйте /start для привязки аккаунта Prime taxi.')
             return
-    await message.answer('Выберите язык / Тилни танланг', reply_markup=LANGUAGE_KEYBOARD)
+    await message.answer('Выберите язык Prime taxi / Prime taxi тилини танланг', reply_markup=LANGUAGE_KEYBOARD)

@@ -26,7 +26,7 @@ def _driver_context(telegram_user):
 async def cmd_menu(message: Message):
     driver, lang = _driver_context(message.from_user)
     if not driver:
-        await message.answer('Сначала используйте /start и привяжите аккаунт.')
+        await message.answer('Сначала используйте /start и привяжите аккаунт Prime taxi.')
         return
     await message.answer(t(lang, 'main_menu'), reply_markup=main_menu_keyboard(lang))
 
@@ -35,6 +35,6 @@ async def cmd_menu(message: Message):
 async def fallback(message: Message):
     driver, lang = _driver_context(message.from_user)
     if not driver:
-        await message.answer('Используйте /start для привязки аккаунта.')
+        await message.answer('Используйте /start для привязки аккаунта Prime taxi.')
         return
     await message.answer(t(lang, 'main_menu'), reply_markup=main_menu_keyboard(lang))

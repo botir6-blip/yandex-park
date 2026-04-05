@@ -21,7 +21,7 @@ async def withdrawal_start(message: Message, state: FSMContext):
     with db_session() as db:
         driver = get_driver_by_telegram_id(db, message.from_user.id)
         if not driver:
-            await message.answer("Используйте /start для привязки аккаунта.")
+            await message.answer("Используйте /start для привязки аккаунта Prime taxi.")
             return
 
         touch_driver(db, driver)
@@ -51,7 +51,7 @@ async def withdrawal_amount(message: Message, state: FSMContext):
     with db_session() as db:
         driver = get_driver_by_telegram_id(db, message.from_user.id)
         if not driver:
-            await message.answer("Используйте /start для привязки аккаунта.")
+            await message.answer("Используйте /start для привязки аккаунта Prime taxi.")
             await state.clear()
             return
 

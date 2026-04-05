@@ -25,7 +25,7 @@ async def cmd_start(message: Message, state: FSMContext):
             await message.answer(t(lang, 'main_menu'), reply_markup=main_menu_keyboard(lang))
             return
     await state.clear()
-    await message.answer('Здравствуйте. Выберите язык / Тилни танланг.', reply_markup=LANGUAGE_KEYBOARD)
+    await message.answer('Здравствуйте. Добро пожаловать в Prime taxi. Выберите язык / Prime taxi га хуш келибсиз. Тилни танланг.', reply_markup=LANGUAGE_KEYBOARD)
 
 
 @router.callback_query(F.data.startswith('lang:'))
@@ -36,7 +36,7 @@ async def choose_language(callback: CallbackQuery, state: FSMContext):
         if driver:
             driver.language = lang
             touch_driver(db, driver)
-            text = 'Язык обновлен.' if lang == 'ru' else 'Тил янгиланди.'
+            text = 'Язык Prime taxi обновлен.' if lang == 'ru' else 'Prime taxi тили янгиланди.'
             await state.clear()
             await callback.message.answer(text, reply_markup=main_menu_keyboard(lang))
         else:

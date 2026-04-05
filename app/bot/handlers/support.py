@@ -15,5 +15,5 @@ async def support_contact(message: Message):
         driver = get_driver_by_telegram_id(db, message.from_user.id)
         lang = driver.language if driver else 'ru'
         support = get_setting(db, 'support_contact', '@support')
-    text = f'Оператор: {support}' if lang == 'ru' else f'Оператор: {support}'
+    text = f'Оператор Prime taxi: {support}' if lang == 'ru' else f'Prime taxi оператори: {support}'
     await message.answer(text, reply_markup=main_menu_keyboard(lang))
