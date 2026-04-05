@@ -1,4 +1,4 @@
-# Yandex автопарк учун Telegram бот — MVP старт-проект
+# Prime taxi учун Telegram бот — MVP старт-проект
 
 Бу архивда **интеграциясиз ишлайдиган MVP старт-кит** бор:
 - Telegram бот (`aiogram 3`)
@@ -21,7 +21,7 @@
 - созламалар
 
 ## Нима ҳали йўқ
-- Yandex парк API интеграцияси
+- Prime taxi API интеграцияси
 - автоматик payout
 - Click/Payme интеграцияси
 - SMS / 2FA
@@ -32,7 +32,7 @@
 ## Папкалар тузилиши
 
 ```text
-yandex_park_bot_mvp/
+prime_taxi_bot_mvp/
 ├── app/
 │   ├── admin/
 │   ├── bot/
@@ -84,7 +84,7 @@ python scripts/generate_fernet_key.py
 
 Мисол:
 ```env
-DATABASE_URL=postgresql+psycopg://postgres:postgres@localhost:5432/parkbot
+DATABASE_URL=postgresql+psycopg://postgres:postgres@localhost:5432/primetaxi
 ```
 
 ### Schema қўйиш
@@ -171,7 +171,7 @@ Schema ва settings'да стандарт:
 ---
 
 ## 7. Кейинги босқичда осон қўшилади
-- Yandex парк `driver sync`
+- Prime taxi `driver sync`
 - автоматик payout processor
 - payment callback
 - background jobs
