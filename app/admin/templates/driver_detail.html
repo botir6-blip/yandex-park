@@ -8,6 +8,7 @@
 
 <div class="stats-grid">
   <div class="stat card"><div class="label">Телефон</div><div class="value small">{{ driver.phone }}</div></div>
+  <div class="stat card"><div class="label">Yandex profile ID</div><div class="value small">{{ driver.yandex_contractor_profile_id or "не привязан" }}</div></div>
   <div class="stat card"><div class="label">Основной баланс</div><div class="value">{{ wallet.main_balance }}</div></div>
   <div class="stat card"><div class="label">Бонусный баланс</div><div class="value">{{ wallet.bonus_balance }}</div></div>
   <div class="stat card"><div class="label">Доступно к выводу</div><div class="value">{{ available }}</div></div>
