@@ -10,6 +10,7 @@ from app.bot.states import RegistrationStates
 from app.bot.texts import t
 from app.db import db_session
 from app.services.driver_service import bind_driver_to_telegram, get_driver_by_phone, get_driver_by_telegram_id, touch_driver
+from app.services.yandex_service import auto_link_driver_by_phone
 
 router = Router()
 
@@ -20,6 +21,7 @@ async def cmd_start(message: Message, state: FSMContext):
         driver = get_driver_by_telegram_id(db, message.from_user.id)
         if driver:
             touch_driver(db, driver)
+            auto_link_driver_by_phone(driver)
             db.commit()
             lang = driver.language or 'ru'
             await state.clear()
@@ -73,6 +75,7 @@ async def receive_contact(message: Message, state: FSMContext):
 
         bind_driver_to_telegram(db, driver, message.from_user.id, message.from_user.username)
         driver.language = lang
+        auto_link_driver_by_phone(driver)
         db.commit()
         await state.clear()
         await message.answer(t(lang, 'bound_ok'), reply_markup=main_menu_keyboard(lang))
