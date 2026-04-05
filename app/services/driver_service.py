@@ -94,3 +94,65 @@ def ensure_wallet(session, driver: Driver) -> DriverWallet:
     session.add(wallet)
     session.flush()
     return wallet
+
+
+def create_driver(
+    session,
+    *,
+    full_name: str,
+    phone: str,
+    language: str = "ru",
+    status: str = "active",
+    park_driver_id: str | None = None,
+    yandex_contractor_profile_id: str | None = None,
+    note: str | None = None,
+):
+    normalized_phone = normalize_phone(phone)
+    if not normalized_phone:
+        raise ValueError("Телефон рақами нотўғри.")
+
+    full_name = (full_name or "").strip()
+    if not full_name:
+        raise ValueError("ФИО мажбурий.")
+
+    language = (language or "ru").strip() or "ru"
+    if language not in {"ru", "uz_cyrl", "uz_latn"}:
+        raise ValueError("Тил нотўғри танланган.")
+
+    status = (status or "active").strip() or "active"
+    if status not in {"active", "inactive", "blocked"}:
+        raise ValueError("Статус нотўғри танланган.")
+
+    park_driver_id = (park_driver_id or "").strip() or None
+    yandex_contractor_profile_id = (yandex_contractor_profile_id or "").strip() or None
+    note = (note or "").strip() or None
+
+    if get_driver_by_phone(session, normalized_phone):
+        raise ValueError("Бу телефон рақами билан ҳайдовчи аллақачон мавжуд.")
+
+    if park_driver_id:
+        existing = session.execute(select(Driver).where(Driver.park_driver_id == park_driver_id)).scalar_one_or_none()
+        if existing:
+            raise ValueError("Бу ID водителя аллақачон мавжуд.")
+
+    if yandex_contractor_profile_id:
+        existing = session.execute(
+            select(Driver).where(Driver.yandex_contractor_profile_id == yandex_contractor_profile_id)
+        ).scalar_one_or_none()
+        if existing:
+            raise ValueError("Бу Yandex profile ID аллақачон бошқа ҳайдовчига бириктирилган.")
+
+    driver = Driver(
+        full_name=full_name,
+        phone=normalized_phone,
+        language=language,
+        status=status,
+        park_driver_id=park_driver_id,
+        yandex_contractor_profile_id=yandex_contractor_profile_id,
+        note=note,
+    )
+    session.add(driver)
+    session.flush()
+    ensure_wallet(session, driver)
+    session.flush()
+    return driver
