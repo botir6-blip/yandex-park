@@ -81,6 +81,7 @@ def search_drivers(session, query: str | None = None):
                 Driver.phone.ilike(pattern),
                 Driver.telegram_username.ilike(pattern),
                 Driver.park_driver_id.ilike(pattern),
+                Driver.yandex_contractor_profile_id.ilike(pattern),
             )
         )
     return list(session.execute(stmt).scalars())
