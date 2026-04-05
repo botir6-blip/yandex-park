@@ -4,6 +4,7 @@
 <div class="card narrow-wide">
   <h1>Настройки</h1>
   <form method="post" class="form-grid">
+    <input type="hidden" name="form_action" value="settings">
     <label><span>Комиссия пополнения, %</span><input type="text" name="deposit_commission_percent" value="{{ values.deposit_commission_percent }}"></label>
     <label><span>Глобальный резерв</span><input type="text" name="global_min_reserve_balance" value="{{ values.global_min_reserve_balance }}"></label>
     <label><span>Минимальная сумма вывода</span><input type="text" name="min_withdraw_amount" value="{{ values.min_withdraw_amount }}"></label>
@@ -11,6 +12,17 @@
     <label><span>Контакт оператора</span><input type="text" name="support_contact" value="{{ values.support_contact }}"></label>
     <label><span>Язык по умолчанию</span><input type="text" name="default_language" value="{{ values.default_language }}"></label>
     <button class="btn" type="submit">Сохранить</button>
+  </form>
+</div>
+
+<div class="card narrow-wide">
+  <h2>Смена пароля</h2>
+  <form method="post" class="form-grid">
+    <input type="hidden" name="form_action" value="password">
+    <label><span>Текущий пароль</span><input type="password" name="current_password" required></label>
+    <label><span>Новый пароль</span><input type="password" name="new_password" minlength="6" required></label>
+    <label><span>Подтвердите новый пароль</span><input type="password" name="confirm_password" minlength="6" required></label>
+    <button class="btn" type="submit">Изменить пароль</button>
   </form>
 </div>
 {% endblock %}
